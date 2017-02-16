@@ -35,4 +35,8 @@ sIDE is the IDE, which stands for "stupid IDE", it looks like this:
 Make sure you have qt5 correctly installed on you computer, and `make`. That's it.
 
 ### Windows
-I've already done this for you. But you do need a installation of the vcruntime(vc++2015).
+I've already done this for you. See:
+
+https://github.com/blackskygg/sIDE/releases/tag/v1.0-beta
+
+But you do need a installation of the vcruntime. If you don't have it, don't worry, just run `vcredist_x64.exe` in the zip.
