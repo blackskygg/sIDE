@@ -10,10 +10,12 @@ This Program is written as a curriculum design project in HUST.
 ## Usage
 ### sas
 sas is the assembler, invoke it like this:
+
     sas in_file out_file
     
 ### ssim
 ssim is the emulator, invoke it like this:
+
     ssim filename
     
 ### sIDE
