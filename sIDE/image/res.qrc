@@ -1,0 +1,44 @@
+<RCC>
+  <qresource prefix="/">
+    <file>bold.png</file>
+    <file>broken-link.png</file>
+    <file>center-align.png</file>
+    <file>close.png</file>
+    <file>columns.png</file>
+    <file>copy.png</file>
+    <file>eraser.png</file>
+    <file>export.png</file>
+    <file>file.png</file>
+    <file>file-1.png</file>
+    <file>folder.png</file>
+    <file>font.png</file>
+    <file>import.png</file>
+    <file>indent.png</file>
+    <file>italic.png</file>
+    <file>justify.png</file>
+    <file>left-align.png</file>
+    <file>link.png</file>
+    <file>list.png</file>
+    <file>list-1.png</file>
+    <file>outdent.png</file>
+    <file>paperclip.png</file>
+    <file>paragraph.png</file>
+    <file>paste.png</file>
+    <file>preview.png</file>
+    <file>print.png</file>
+    <file>redo.png</file>
+    <file>right-align.png</file>
+    <file>save.png</file>
+    <file>save-1.png</file>
+    <file>scissors.png</file>
+    <file>strikethrough.png</file>
+    <file>subscript.png</file>
+    <file>superscript.png</file>
+    <file>table.png</file>
+    <file>table-1.png</file>
+    <file>text-height.png</file>
+    <file>text-width.png</file>
+    <file>underline.png</file>
+    <file>undo.png</file>
+  </qresource>
+</RCC>

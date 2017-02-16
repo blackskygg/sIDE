@@ -1,0 +1,140 @@
+	byte	line[128]		# line buffer
+
+	loadi	G	0
+input_loop:
+	in	A	0
+check_positive:	# if (A == '+')  ignore;
+	loadi	B	43
+	equ	A	B
+	notc
+	cjmp	check_neg
+	jmp	input_loop
+check_neg:	# if (A == '-') output;	
+	loadi	B	45
+	equ	A	B
+	notc
+	cjmp	check_wordbound
+	out	A	15
+	jmp	input_loop
+check_wordbound:	
+	# if (A == '\n' || A == ' ') translate(G);
+	loadi	B	10
+	equ	A	B	# '\n' ?
+	cjmp	call_translate
+	loadi	B	32
+	equ	A	B	# ' ' ?
+	notc
+	cjmp	check_lower_hex
+call_translate:
+	push	G
+	call	translate
+	loadi	B	32
+	out	B	15
+	loadi	B	10
+	equ	A	B	#if A == '\n', exit
+	cjmp	exit
+	loadi	G	0f
+	jmp	input_loop
+check_lower_hex:	# A in [a-f]?
+	loadi	B	102
+	lt	B	A
+	cjmp	error
+	loadi	B	97
+	lt	A	B
+	cjmp	check_upper_hex
+	# A = A-97+10;
+	subi	A	97
+	addi	A	10
+	jmp	next
+check_upper_hex:	# A in [A-F]?
+	loadi	B	70
+	lt	B	A
+	cjmp	error
+	loadi	B	65
+	lt	A	B
+	cjmp	check_num
+	# A = A-65+10;
+	subi	A	65
+	addi	A	10
+	jmp	next
+check_num:		# A in [0-9]?
+	loadi	B	57
+	lt	B	A
+	cjmp	error
+	loadi	B	48
+	lt	A	B
+	cjmp	error
+	# A = A-48;
+	subi	A	48
+
+next:	storeb	A	line
+	addi	G	1
+	jmp	input_loop
+error:	out	A	15
+	call	print_error
+exit:	ret
+
+
+translate:		# translate hex to dec and print
+	pop	C
+	loadi	G	0
+push_loop:
+	lte	C	G
+	cjmp	trans
+	loadb	A	line
+	push	A
+	addi	G	1
+	jmp	push_loop
+trans:	loadi	G	0
+	loadi	B	1	# radix
+	loadi	D	0	# result
+trans_loop:
+	lte	C	G
+	cjmp	translate_end
+	pop	A
+	mul	A	A	B
+	add	D	D	A
+	loadi	A	16
+	mul	B	B	A
+	addi	G	1
+	jmp	trans_loop	
+translate_end:
+	push	D
+	call	print_num
+	ret
+
+
+print_num:		# print a number
+	pop	C
+	loadi	G	0
+          	loadi    	D        	10
+div_loop: 	div      	E        	C       	D
+          	mul      	F        	D       	E
+          	sub      	F        	C       	F
+          	push     	F
+          	addi     	G        	1
+          	add     	C        	E       	Z
+          	lt      	Z        	C
+         	cjmp     	div_loop
+prnt_loop:	pop     	C
+          	addi     	C        	48
+          	out     	C        	15
+          	subi     	G        	1
+          	lt       	Z        	G
+          	cjmp     	prnt_loop
+	ret
+
+
+print_error:	# print string "error\n"
+	loadi	A	101
+	out	A	15
+	loadi	A	114
+	out	A	15
+	out	A	15
+	loadi	A	111
+	out	A	15
+	loadi	A	114
+	out	A	15
+	loadi	A	10
+	out	A	15
+	ret
