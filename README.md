@@ -5,7 +5,9 @@ The specification of the simplified computer and the assembly language can be fo
 
 https://github.com/blackskygg/sIDE/blob/master/Assignment1.pdf
 
-This Program is written as a curriculum design project in HUST.
+This Program is written as a curriculum design project in HUST. 
+I don't know if the teachers in your university like asking students to write a GUI for ANY curriculum design projects, too.
+If so, feel free to use this code if you want a simple IDE.
 
 ## Usage
 ### sas
