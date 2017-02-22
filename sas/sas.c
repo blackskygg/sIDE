@@ -42,17 +42,10 @@ FILE *g_fin, *g_fout;
 FILE *g_flist;
 
 // Translate a string to uppercase.
-// But characters surrounded by "" or with proceeding # will be ignored.
+// But characters surrounded by "" will be ignored.
 void str_toupper(char *str) {
-  bool in_quote = false;
-  
-  for (; *str && '#' != *str; ++str) {
-    if ('\"' == *str) {
-      in_quote = !in_quote;
-    } else {
-      if (!in_quote)
-        *str = toupper(*str);
-    }
+  for (; *str && '\"' != *str; ++str) {
+    *str = toupper(*str);
   }
 }
 
@@ -240,15 +233,30 @@ int process_bracket(char **curr_ptr, size_t elem_size) {
 // Process string constant initializers.
 // Returns the string length on sucess, negative number on failure.
 int process_string_const(char **line) {
-  char string[LINE_BUF_SIZE], len;
+  char str[LINE_BUF_SIZE], *str_ptr, *line_ptr;
+  int len = 0;
+
+  str_ptr = str;
+  line_ptr = *line + 1;
+  for (; *line_ptr && '\"' != *line_ptr; ++line_ptr) {
+    if ('\\' == *line_ptr) {
+      if (*++line_ptr) {
+        *str_ptr++ = *line_ptr;
+      } else {
+        return -1;
+      }
+    } else {
+      *str_ptr++ = *line_ptr;
+    }
+  }
+  *str_ptr = 0;
+
+  if ('\"' != *line_ptr) return -1; // Unmatched quotes
+  len = str_ptr-str+1;
+  fwrite(str, len, 1, g_fout);
+  *line = line_ptr + 1;
   
-  if (1 != sscanf(*line, "\"%[^\"]\"", string)) return -1;
-  
-  len = strlen(string);
-  fwrite(string, len + 1, 1, g_fout);
-  *line += len+2;
-  
-  return len + 1;
+  return len;
 }
 
 // Process data definitions.
@@ -327,11 +335,19 @@ int process_data(char *line, char *keyword, int step) {
         
       } else if ('\"' == *curr_ptr && 1 == elem_size) { // String
         int val_num = process_string_const(&curr_ptr);
-        if (val_num < 0 || val_num > elem_num) return -1;
+        if (val_num < 0) {
+          puts("Illegal string constant");
+          return -1;
+        }
+        if (val_num > elem_num) {
+          puts("String constant exceeds the capacity of the array");
+          return -1;
+        }
         // Fill out the rest with zeros.
         fwrite(&zero, elem_size, elem_num - val_num, g_fout);
         
       } else { // Illegal syntax.
+        puts("Illegal data syntax");
         return -1;
       }
       
@@ -341,7 +357,10 @@ int process_data(char *line, char *keyword, int step) {
 
     // Process ending.
     while (isspace(*curr_ptr)) curr_ptr++;
-    if (*curr_ptr != '\0' && *curr_ptr != '#') return -1;
+    if (*curr_ptr != '\0' && *curr_ptr != '#') {
+      printf("Trailling garbage: %s\n", curr_ptr);
+      return -1;
+    }
   }
 
   curr_ds_addr += elem_num * elem_size;

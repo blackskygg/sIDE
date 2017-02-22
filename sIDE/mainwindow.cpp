@@ -270,7 +270,7 @@ void MainWindow::on_assemble_triggered()
     ui->actionAssemble_Run->setEnabled(false);
 
     ui->tabWidget->setCurrentWidget(ui->tabAssembler);
-    assembleWorker->execute(tr("sas.exe"), args);
+    assembleWorker->execute(tr("./sas.exe"), args);
 }
 
 void MainWindow::on_runThread_started()
@@ -308,7 +308,7 @@ void MainWindow::on_run_triggered()
 
     ui->actionRun->setEnabled(false);
     ui->actionKill->setEnabled(true);
-    runWorker->execute(tr("ssim.exe"), args);
+    runWorker->execute(tr("./ssim.exe"), args);
 }
 
 void MainWindow::on_stop_triggered()

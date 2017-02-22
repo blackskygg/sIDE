@@ -1,0 +1,12 @@
+	byte	text[16] = "Say: \"Hello!\""
+
+	loadi	G	0
+loop:
+	loadb	A	text
+	equ	A	Z
+	cjmp	end
+	out	A	15
+	addi	G	1
+	jmp	loop
+end:
+	ret
